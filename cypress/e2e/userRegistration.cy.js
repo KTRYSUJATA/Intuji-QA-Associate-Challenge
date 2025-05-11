@@ -51,7 +51,8 @@ describe('User Registration & Session Handling - AutomationExercise', () => {
     cy.get('#city').type(user.city);
     cy.get('#zipcode').type(user.zipCode);
     cy.get('#mobile_number').type(user.mobileNumber);
-
+    cy.log(`Generated user email: ${user.email}`);
+    cy.log(`Generated user password: ${user.password}`);
     cy.get('button[data-qa="create-account"]').click();
 
     cy.contains('Account Created!').should('be.visible');
@@ -66,6 +67,14 @@ describe('User Registration & Session Handling - AutomationExercise', () => {
         cy.setCookie(cookie.name, cookie.value);
       });
     });
+    // === ✨ Write user credentials to CSV ===
+    const csvLine = `"${user.email}","${user.password}"\n`;
+
+    cy.writeFile('cypress/fixtures/registeredUsers.csv', 'email,password\n', { flag: 'w' }); // Write header (overwrite first)
+    cy.writeFile('cypress/fixtures/registeredUsers.csv', csvLine, { flag: 'a+' });           // Append user data
+
+    cy.log('✅ User credentials saved to cypress/fixtures/registeredUsers.csv');
+
   });
 
   it('Reuses session and verifies user is still logged in', () => {
