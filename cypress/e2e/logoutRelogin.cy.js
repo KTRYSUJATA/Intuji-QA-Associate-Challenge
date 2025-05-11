@@ -51,5 +51,3 @@ describe('Logout and Re-login Flow - AutomationExercise', () => {
     });
   
   });
-//   logGenerated user email: 
-// logGenerated user password: C1GH48MwE15F
