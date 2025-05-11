@@ -58,22 +58,20 @@ describe('User Registration & Session Handling - AutomationExercise', () => {
     cy.contains('Account Created!').should('be.visible');
     cy.get('a[data-qa="continue-button"]').click();
 
-    // THIS IS THE CORRECT WAY TO VERIFY LOGIN
     cy.contains('a', `Logged in as ${user.name}`, { timeout: 10000 }).should('be.visible');
 
-    // Save cookies/session
     cy.getCookies().then((cookies) => {
       cookies.forEach(cookie => {
         cy.setCookie(cookie.name, cookie.value);
       });
     });
-    // === ✨ Write user credentials to CSV ===
+
     const csvLine = `"${user.email}","${user.password}"\n`;
 
-    cy.writeFile('cypress/fixtures/registeredUsers.csv', 'email,password\n', { flag: 'w' }); // Write header (overwrite first)
-    cy.writeFile('cypress/fixtures/registeredUsers.csv', csvLine, { flag: 'a+' });           // Append user data
+    cy.writeFile('cypress/fixtures/registeredUsers.csv', 'email,password\n', { flag: 'w' });
+    cy.writeFile('cypress/fixtures/registeredUsers.csv', csvLine, { flag: 'a+' });         
 
-    cy.log('✅ User credentials saved to cypress/fixtures/registeredUsers.csv');
+    cy.log('User credentials saved to cypress/fixtures/registeredUsers.csv');
 
   });
 
@@ -87,14 +85,11 @@ describe('User Registration & Session Handling - AutomationExercise', () => {
     });
 
     cy.reload(); 
+    cy.wait(2000);
+    cy.contains('a', `Logged in as ${user.name}`, { timeout: 10000 }).should('be.visible');
+    
+    cy.log('User session reused and verified.');
 
-    cy.contains('a', `Logged in as ${user.name}`, { timeout: 10000 }).then($el => {
-        if ($el.length > 0 && $el.is(':visible')) {
-          cy.log('User is logged in successfully.');
-        } else {
-          cy.log('User is not logged in — element not visible.');
-        }
-      });
   });
 
 });
